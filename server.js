@@ -40,7 +40,7 @@ async function init() {
       INSERT INTO employees(name, department_id) VALUES('Scott', (SELECT id FROM departments WHERE name='Engineering'));
       INSERT INTO employees(name, department_id) VALUES('John', (SELECT id FROM departments WHERE name='Human Resources'));
       INSERT INTO employees(name, department_id) VALUES('Eric', (SELECT id FROM departments WHERE name='Manufacturing'));
-      INSERT INTO employees(name, department_id) VALUES('Eric', (SELECT id FROM departments WHERE name='CEO'));
+      INSERT INTO employees(name, department_id) VALUES('Jack', (SELECT id FROM departments WHERE name='CEO'));
     `;
   
     await client.query(SQL);
@@ -81,8 +81,8 @@ server.get("/api/employees", async (req, res, next) => {
       const { name, department_id} = req.body;
       const SQL = `INSERT INTO employees(name, department_id) VALUES($1, $2) RETURNING *;`
       const response = await client.query(SQL, [
-        name,
-        department_id
+        name, //$1
+        department_id //$2
       ]);
       res.send(response.rows[0]);
     }catch (error) {
@@ -95,9 +95,9 @@ server.get("/api/employees", async (req, res, next) => {
       const { name, department_id } = req.body;
       const SQL = `UPDATE employees SET name=$1, department_id=$2, updated_at=now() WHERE id=$3 RETURNING *;`;
       const response = await client.query(SQL, [
-        name,
-        department_id,
-        req.params.id
+        name, //$1
+        department_id, //$2
+        req.params.id //$2
       ]);
   
       res.send(response.rows[0]);
